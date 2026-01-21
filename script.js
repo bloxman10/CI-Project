@@ -1,31 +1,35 @@
 const users = {};
 
-function register() {
+async function register() {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
     const message = document.getElementById("message");
 
-    if (!username || !password) {
-        message.innerText = "Fill all fields";
-        return;
-    }
+    const res = await fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+    });
 
-    if (users[username]) {
-        message.innerText = "User already exists";
-        return;
-    }
-
-    users[username] = password;
-    message.innerText = "Registered successfully";
+    const data = await res.json();
+    message.innerText = data.message;
 }
 
-function login() {
+async function login() {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
     const message = document.getElementById("message");
 
-    if (users[username] !== password) {
-        message.innerText = "Invalid credentials";
+    const res = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        message.innerText = data.message;
         return;
     }
 
